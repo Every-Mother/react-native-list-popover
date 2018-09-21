@@ -7,6 +7,7 @@ The main properties to send from the parent component:
 * `isVisible` indicator that makes the popover visible or not
 * `onClick` callback function that takes an `item` parameter to handle the click operation
 * `onClose` callback function to set the isVisible to false to close the popover
+* `maxHeightFraction` fraction or decimal, used to change the maxHeight of the list in relation to the window height. Defaults to 3/4 if not set
 
 
 ## Screenshots

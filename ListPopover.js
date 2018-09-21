@@ -13,7 +13,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-const SCREEN_HEIGHT = Dimensions.get('window').height;
 const noop = () => {};
 const ds = new ListView.DataSource({rowHasChanged: (r1,r2)=>(r1!==r2)});
 
@@ -25,10 +24,26 @@ class ListPopover extends React.Component {
     };
   }
 
+  listMaxHeightHandler = dims => this.setListMaxHeight();
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.list !== this.props.list) {
       this.setState({dataSource: ds.cloneWithRows(nextProps.list)});
     }
+  }
+
+  componentWillMount() {
+    this.setListMaxHeight();
+    Dimensions.addEventListener("change", this.listMaxHeightHandler);
+  }
+
+  componentWillUnmount() {
+    Dimensions.removeEventListener("change", this.listMaxHeightHandler);
+  }
+
+  setListMaxHeight() {
+    const maxHeightFraction = this.props.maxHeightFraction || 3/4;
+    this.setState({listMaxHeight: Dimensions.get('window').height * maxHeightFraction});
   }
 
   handleClick(data) {
@@ -61,14 +76,9 @@ class ListPopover extends React.Component {
   }
 
   renderList() {
-    const styles = this.props.style || DefaultStyles;
-    let maxHeight = {};
-    if (this.props.list.length > 12) {
-      maxHeight = {height: SCREEN_HEIGHT * 3/4};
-    }
     return (
       <ListView
-        style={maxHeight}
+        style={{maxHeight: this.state.listMaxHeight}}
         dataSource={this.state.dataSource}
         renderRow={(rowData) => this.renderRow(rowData)}
       />
