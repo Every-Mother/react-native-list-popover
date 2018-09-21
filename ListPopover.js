@@ -76,11 +76,14 @@ class ListPopover extends React.Component {
   }
 
   renderList() {
+    const scrollBounce = this.props.scrollBounce === undefined ? true : this.props.scrollBounce;
+
     return (
       <ListView
         style={{maxHeight: this.state.listMaxHeight}}
         dataSource={this.state.dataSource}
         renderRow={(rowData) => this.renderRow(rowData)}
+        bounces={scrollBounce}
       />
     );
   }
