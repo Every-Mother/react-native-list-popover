@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  ListView,
+  FlatList,
   StyleSheet,
   Text,
   Dimensions,
@@ -14,13 +14,12 @@ import {
   View
 } from 'react-native';
 const noop = () => {};
-const ds = new ListView.DataSource({rowHasChanged: (r1,r2)=>(r1!==r2)});
 
 class ListPopover extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataSource: ds.cloneWithRows(this.props.list)
+      dataSource: this.props.list
     };
   }
 
@@ -28,7 +27,7 @@ class ListPopover extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.list !== this.props.list) {
-      this.setState({dataSource: ds.cloneWithRows(nextProps.list)});
+      this.setState({dataSource: nextProps.list});
     }
   }
 
@@ -51,24 +50,24 @@ class ListPopover extends React.Component {
     this.props.onClose();
   }
 
-  renderRow(rowData) {
+  renderRow(rowText) {
     const separatorStyle = this.props.separatorStyle || DefaultStyles.separator;
     const rowTextStyle = this.props.rowText || DefaultStyles.rowText;
 
     let separator = <View style={separatorStyle}/>;
-    if (rowData === this.props.list[0]) {
+    if (rowText === this.props.list[0]) {
       separator = null;
     }
 
-    let row = <Text style={rowTextStyle}>{rowData}</Text>
+    let row = <Text style={rowTextStyle}>{rowText}</Text>
     if (this.props.renderRow) {
-      row = this.props.renderRow(rowData);
+      row = this.props.renderRow(rowText);
     }
 
     return (
       <View>
         {separator}
-        <TouchableOpacity onPress={() => this.handleClick(rowData)}>
+        <TouchableOpacity onPress={() => this.handleClick(rowText)}>
           {row}
         </TouchableOpacity>
       </View>
@@ -79,10 +78,11 @@ class ListPopover extends React.Component {
     const scrollBounce = this.props.scrollBounce === undefined ? true : this.props.scrollBounce;
 
     return (
-      <ListView
+      <FlatList
         style={{maxHeight: this.state.listMaxHeight}}
-        dataSource={this.state.dataSource}
-        renderRow={(rowData) => this.renderRow(rowData)}
+        data={this.state.dataSource}
+        renderItem={({ item }) => this.renderRow(item.title)}
+        keyExtractor={item => item.id}
         bounces={scrollBounce}
       />
     );
