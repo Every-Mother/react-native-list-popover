@@ -25,13 +25,13 @@ class ListPopover extends React.Component {
 
   listMaxHeightHandler = dims => this.setListMaxHeight();
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.list !== this.props.list) {
       this.setState({dataSource: nextProps.list});
     }
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.setListMaxHeight();
     Dimensions.addEventListener("change", this.listMaxHeightHandler);
   }
